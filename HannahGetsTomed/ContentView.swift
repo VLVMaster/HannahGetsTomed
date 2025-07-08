@@ -2,11 +2,7 @@
 //  ContentView.swift
 //  HannahGetsTomed
 //
-//  Created by Hannah Mercer on 07/07/2025.
-//
 
-
-// ContentView.swift
 import SwiftUI
 
 struct ContentView: View {
@@ -23,17 +19,17 @@ struct ContentView: View {
                 }
                 .tag(0)
             
+            GeneratedWorkoutsView()
+                .tabItem {
+                    Image(systemName: "list.clipboard.fill")
+                    Text("Workouts")
+                }
+                .tag(1)
+            
             CalendarView()
                 .tabItem {
                     Image(systemName: "calendar")
                     Text("Calendar")
-                }
-                .tag(1)
-            
-            WorkoutPlansView()
-                .tabItem {
-                    Image(systemName: "list.clipboard")
-                    Text("Plans")
                 }
                 .tag(2)
             
@@ -43,6 +39,13 @@ struct ContentView: View {
                     Text("Builder")
                 }
                 .tag(3)
+            
+            WorkoutPlansView()
+                .tabItem {
+                    Image(systemName: "folder.fill")
+                    Text("Plans")
+                }
+                .tag(4)
         }
         .environmentObject(dataManager)
         .environmentObject(exerciseDB)

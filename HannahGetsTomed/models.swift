@@ -1,12 +1,8 @@
 //
-//  MovementPattern.swift
+//  Models.swift
 //  HannahGetsTomed
 //
-//  Created by Hannah Mercer on 07/07/2025.
-//
 
-
-// Models.swift
 import Foundation
 
 // MARK: - Enums
@@ -65,8 +61,11 @@ struct WorkoutSet: Identifiable, Codable {
     let id = UUID()
     var weight: Double
     var reps: Int
+    var rpe: Int? // Rate of Perceived Exertion
     var date: Date = Date()
     var notes: String = ""
+    var restTime: TimeInterval? // Rest time in seconds
+    var personalBest: Bool = false
 }
 
 struct ExerciseLog: Identifiable, Codable {
@@ -76,6 +75,9 @@ struct ExerciseLog: Identifiable, Codable {
     var sets: [WorkoutSet]
     var notes: String
     let date: Date
+    var targetReps: String = "" // e.g., "3x5", "4x8-10"
+    var targetWeight: Double?
+    var lastUsedWeight: Double?
 }
 
 struct WorkoutSession: Identifiable, Codable {
@@ -85,6 +87,7 @@ struct WorkoutSession: Identifiable, Codable {
     var duration: TimeInterval
     var generalNotes: String
     var isCompleted: Bool
+    var workoutName: String = ""
 }
 
 struct WorkoutDay: Identifiable, Codable {
@@ -104,4 +107,61 @@ struct WorkoutBlock: Identifiable, Codable {
     var weeks: [[WorkoutDay]]
     var currentWeek: Int
     var repRanges: [String: String]
+}
+
+// MARK: - New Models for Daily Workout Generation
+struct GeneratedWorkout: Identifiable, Codable {
+    let id: UUID
+    let day: Int
+    var name: String
+    let primaryPattern: MovementPattern
+    var primary: Exercise
+    var secondary: Exercise
+    var supersetA: Exercise
+    var supersetB: Exercise
+    var conditioning: Exercise
+    
+    var workoutFormat: String {
+        return """
+        A) \(primary.name) (Primary \(primaryPattern.rawValue))
+        B) \(secondary.name) (Secondary)
+        C1) \(supersetA.name) (Superset)
+        C2) \(supersetB.name) (Superset)
+        D) \(conditioning.name) (Conditioning)
+        """
+    }
+}
+
+// MARK: - Exercise History & Analytics
+struct ExerciseAnalytics: Identifiable, Codable {
+    let id = UUID()
+    let exerciseId: UUID
+    var totalSessions: Int
+    var totalVolume: Double // weight x reps x sets
+    var personalBests: [String: WorkoutSet] // "1RM", "3RM", "5RM", etc.
+    var lastUsed: Date?
+    var averageRPE: Double?
+    var progressTrend: ProgressTrend
+}
+
+enum ProgressTrend: String, Codable {
+    case improving = "Improving"
+    case plateaued = "Plateaued"
+    case declining = "Declining"
+    case insufficient = "Insufficient Data"
+}
+
+// MARK: - Swap Options
+struct SwapOption {
+    let exercise: Exercise
+    let reason: String // "Similar equipment", "Same pattern", "Recently used"
+    let lastUsed: Date?
+}
+
+// MARK: - Workout Suggestions
+struct WorkoutSuggestion {
+    let suggestedWeight: Double?
+    let suggestedReps: String
+    let suggestedRPE: Int?
+    let basedOn: String // "Last session", "Progressive overload", "Deload"
 }
